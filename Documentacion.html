@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CASimulations</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/prettify.css">
+</head>
+<body>
+
+    <header>        
+        <h1> Instalación</h1>
+    </header>
+    <nav>
+        <ul class="menu">
+            <li class="boton"><a href="index.html">Inicio</a></li>
+            <li class="boton">
+                <a href="Instalacion.html">Instalación</a>                
+            <li><a href="#">Multimedia</a></li>
+            <li><a href="#">Autores</a></li>
+        </ul>
+    </nav>
+    <section class="contenedor">
+        <section class="central">
+            <article>
+                <h1 id="casimulations">CAsimulations</h1>
+<p><code>CAsimulations</code> proporciona una manera de simular fenómenos asociados con la propagación de enfermedades, basándose en modelos <em>SIR</em> y <em>SIS</em> implementados en autómatas celulares en Python. <code>CAsimulations</code> incluye una gran variedad de utilidades para análisis epidemiológicos tales como la capacidad de definir la condición inicial de frontera del sistema, la condición inicial de dispersión de los individuos infectados, variaciones y comparaciones con respecto al cambio de escala y al cambio de frontera del sistema, variaciones promedio para un número arbitrario de simulaciones, entre otros.</p>
+<h3 id="instalación">Instalación</h3>
+<p>Solo debemos usar pip para instalar:</p>
+<p><code>pip install -i https://test.pypi.org/simple/ casimulation</code> ### Preliminares Se decidió implementar una interpolación tipo spline cubica para la correcta visualización de los datos obtenidos a partir de listas de coordenadas. <code>spline3</code> genera los coeficientes de los polinomios cúbicos que mejor se aproximan a la lista <code>A</code> . #### spline3(A) Realice una interpolación cubica tipo spline, tomando como puntos los elementos de A. ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas.</code></pre>
+<h6 id="devoluciones">Devoluciones:</h6>
+<pre><code>np.array    #Arreglo de puntos al aplicar un spline cubico.</code></pre>
+<h5 id="ejemplo">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; from CAsimulation import camodels as cm
+&gt;&gt;&gt; Point_list=[[1,0.2],[2,2.7],[3,3],[4,1],[5,2]]
+&gt;&gt;&gt; cm.spline3(Point_list)
+array([[ 0.2       ,  2.87142857,  0.        , -0.37142857],
+       [ 2.7       ,  1.75714286, -1.11428571, -0.34285714],
+       [ 3.        , -1.5       , -2.14285714,  1.64285714],
+       [ 1.        , -0.85714286,  2.78571429, -0.92857143]])</code></pre>
+<h4 id="one_function_grapha-x">one_function_graph(A, x)</h4>
+<p>Graficá el spline cubico para los elementos de A. ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas de la función x
+x: str    #Nombre de la función</code></pre>
+<h6 id="devoluciones-1">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de la función x </code></pre>
+<h4 id="one_state_grapha-x">one_state_graph(A, x)</h4>
+<p>Graficá el spline cubico para los elementos de A de manera normalizada ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas de la función x
+x: str    #Nombre de la función</code></pre>
+<h6 id="devoluciones-2">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de la función normalizada x </code></pre>
+<h4 id="two_states_grapha-b-x-y-z">two_states_graph(A, B, X, Y, Z)</h4>
+<p>Graficá el spline cubico para los elementos de A y B ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas de la función x 
+B: list   #Lista de coordenadas de la función y
+x: str    #Nombre de la primera función
+y: str    #Nombre de la segunda función
+z: str    #Título del gráfico</code></pre>
+<h6 id="devoluciones-3">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de las funciones x e y con título z</code></pre>
+<h4 id="three_states_grapha-b-c-x-y-z-w">three_states_graph(A, B, C, x, y, z, w)</h4>
+<p>Graficá el spline cubico para los elementos de A, B y C ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas de la función x
+B: list   #Lista de coordenadas de la función y
+C: list   #Lista de coordenadas de la función z
+x: str    #Nombre de la primera función
+y: str    #Nombre de la segunda función
+z: str    #Nombre de la tercera función
+w: str    #Título del gráfico </code></pre>
+<h6 id="devoluciones-4">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de las funciones x, y, z con título w</code></pre>
+<h3 id="autómatas-celulares-2-dimensionales">Autómatas celulares 2-dimensionales</h3>
+<p>Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.</p>
+<div class="figure">
+<img src="Imagenes/Vecindad_de_Moore.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="array_generatora-i-j">array_generator(A, i, j)</h4>
+<p>Genera la vecindad de Moore para la célula en la fila i columna j ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
+I: int        #Fila i de A
+J: int        #Fila j de A</code></pre>
+<h6 id="devoluciones-5">Devoluciones:</h6>
+<pre><code>np.array    #Vecindad de Moore de la célula en la fila i columna j</code></pre>
+<p>Inicialmente debemos identificar dos estados básicos en la simulación basada en modelos de propagación. El primero de ellos será el estado de susceptibilidad, los agentes (píxeles o componentes de la matriz) que tengan este estado, podrán adquirir la enfermedad y por otro lado tendremos los individuos que cuenten con el estado de infección, los cuales podrían infectar a los individuos susceptibles.</p>
+<p>Identificaremos los estados <em>susceptible</em> e <em>infectado</em> con los valores numéricos 0 (cero) y 1 (uno) respectivamente.</p>
+<h4 id="vector_sa">vector_S(A)</h4>
+<p>Genera la lista de posiciones de individuos susceptibles, los cuales identificamos con 0 (cero) ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-6">Devoluciones:</h6>
+<pre><code>list    #Lista de posiciones de individuos susceptibles</code></pre>
+<h4 id="vector_ia">vector_I(A)</h4>
+<p>Genera la lista de posiciones de individuos infectados, identificados con 1 (uno)<br />###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-7">Devoluciones:</h6>
+<pre><code>list    #Vector de posiciones de individuos infectados</code></pre>
+<h5 id="ejemplo-1">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; import random
+&gt;&gt;&gt; random_matrix = [[random.randint(-1,3) for e in range(6)] for e in range(8)]
+&gt;&gt;&gt; random_matrix
+[[3, 1, 0, 1, 1, 2],
+ [0, 1, -1, -1, 2, 1],
+ [-1, 1, 1, 0, 2, 0],
+ [0, -1, 2, -1, 1, -1],
+ [0, 2, 1, -1, -1, 2],
+ [-1, -1, 3, 1, 0, 2],
+ [3, 3, 2, 2, -1, 3],
+ [1, 2, -1, -1, 3, 3]]
+&gt;&gt;&gt; cm.array_generator(random_matrix, 3,4)
+array([[ 0.,  2.,  0.],
+       [-1.,  1., -1.],
+       [-1., -1.,  2.]])
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; random_matrix=np.array(random_matrix)
+&gt;&gt;&gt; cm.vector_S(random_matrix)
+[[0, 2], [1, 0], [2, 3], [2, 5], [3, 0], [4, 0], [5, 4]]
+&gt;&gt;&gt; cm.vector_I(random_matrix)
+[[0, 1], [0, 3], [0, 4], [1, 1], [1, 5], [2, 1], [2, 2], [3, 4], [4, 2], [5, 3], [7, 0]]</code></pre>
+<h2 id="modelos-epidemiológicos-en-ac">Modelos epidemiológicos en AC</h2>
+<p>Para comenzar con nuestro estudio en los modelos epidemiológicos usando AC, es importante definir los estados modelo. Trabajaremos con estados susceptibles <em>S</em>, infectados <em>I</em>, recuperados <em>R</em> y muertos <em>D</em>, adicionalmente incluiremos el estado vació <em>V</em> en nuestro modelo, esto permitirá realizar un análisis en el cambio de la topología de la vecindad de Moore, está noción se explicara de manera mas precisa en secciones posteriores. De esta manera, el conjunto de estados estará dado por <span class="math">∑ = {<em>S</em>, <em>I</em>, <em>R</em>, <em>D</em>, <em>V</em>}</span>.</p>
+<p>Representaremos con los colores amarillo, rojo, verde y blanco los estados <em>S</em>, <em>I</em>, <em>R</em> y <em>D</em> respectivamente. En la siguiente ilustración se muestran únicamente uno de los casos posibles de permutación por cada estado de interacción la vecindad.</p>
+<div class="figure">
+<img src="Imagenes/estados.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Para plantear adecuadamente la regla de evolución local, debemos implementar una manera de contar los individuos que tengan un estado especifico en algún tiempo <span class="math"><em>t</em></span> y en una vecindad determinada. Las funciones <code>sumaS, sumaI</code> y <code>sumaR</code> nos permiten contar la cantidad de vecinos que sean susceptibles, infectados o recuperados respectivamente, además de incluir la función <code>sumaV</code> que nos permite contar la cantidad de espacios vacíos en la vecindad a estudiar.</p>
+<h4 id="sumasv">sumaS(V)</h4>
+<p>cantidad de individuos susceptibles en la vecindad ###### Parámetros:</p>
+<pre><code>V: np.array   #Vecindad</code></pre>
+<h6 id="devoluciones-8">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos susceptibles en la vecindad V</code></pre>
+<h4 id="sumaiv">sumaI(V)</h4>
+<p>cantidad de individuos infectados en la vecindad ###### Parámetros:</p>
+<pre><code>V: np.array   #Vecindad</code></pre>
+<h6 id="devoluciones-9">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos infectados en la vecindad V</code></pre>
+<h4 id="sumarv">sumaR(V)</h4>
+<p>cantidad de individuos recuperados en la vecindad ###### Parámetros:</p>
+<pre><code>V: np.array   #Vecindad</code></pre>
+<h6 id="devoluciones-10">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos recuperados en la vecindad V</code></pre>
+<h4 id="sumavv">sumaV(V)</h4>
+<p>cantidad de espacios vacíos en la vecindad ###### Parámetros:</p>
+<pre><code>V: np.array   #Vecindad</code></pre>
+<h6 id="devoluciones-11">Devoluciones:</h6>
+<pre><code>int   #Cantidad de espacios vacíos en la vecindad V</code></pre>
+<h5 id="ejemplo-2">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; V = cm.array_generator(random_matrix, 6, 3)
+&gt;&gt;&gt; print(cm.sumaS(V), cm.sumaI(V), cm.sumaR(V), cm.sumaV(V))
+1 1 1 3</code></pre>
+<h4 id="colora">color(A)</h4>
+<p>La función <code>color</code> nos permite graficar el entorno espacial de ina manera intuitiva en una escala de colores rgb, usando la paleta nipy_spectral de Python. ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-12">Devoluciones:</h6>
+<p><code>np.array   #Arreglo con entradas en escala rgb</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; import matplotlib.pyplot as plt
+&gt;&gt;&gt; plt.imshow(cm.color(random_matrix),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)</code></pre>
+<div class="figure">
+<img src="Imagenes/color.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Las funciones <code>count_S, count_I, count_R</code> y <code>count_D</code> nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados <em>S, I, R</em> o <em>D</em>, mientras que con las funciones <code>count_s, count_i, count_r</code> y <code>count_d</code> podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.</p>
+<h4 id="count_sa">count_S(A)</h4>
+<p>Cantidad de individuos susceptibles ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-13">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos susceptibles en el sistema A</code></pre>
+<h4 id="count_ia">count_I(A)</h4>
+<p>Cantidad de individuos infectados ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-14">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos infectados en el sistema A</code></pre>
+<h4 id="count_ra">count_R(A)</h4>
+<p>Cantidad de individuos recuperados ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-15">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos recuperados en el sistema A</code></pre>
+<h4 id="count_da">count_D(A)</h4>
+<p>Cantidad de individuos muertos ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-16">Devoluciones:</h6>
+<pre><code>int   #Cantidad de individuos recuperados en el sistema A</code></pre>
+<h4 id="num_individualsa">num_individuals(A)</h4>
+<p>Cantidad de espacios no vacíos ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-17">Devoluciones:</h6>
+<pre><code>int   #Cantidad de espacios no vacíos en el sistema A</code></pre>
+<h4 id="count_sa-1">count_s(A)</h4>
+<p>Promedio de individuos susceptibles ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-18">Devoluciones:</h6>
+<pre><code>float   #Promedio de individuos susceptibles en el sistema A con respecto a la cantidad de espacios no                                                   vacíos</code></pre>
+<h4 id="count_ia-1">count_i(A)</h4>
+<p>Promedio de individuos infectados ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-19">Devoluciones:</h6>
+<pre><code>float   #Promedio de individuos infectados en el sistema A con respecto a la cantidad de espacios no vacíos</code></pre>
+<h4 id="count_ra-1">count_r(A)</h4>
+<p>Promedio de individuos recuperados ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-20">Devoluciones:</h6>
+<pre><code>float   #Promedio de individuos recuperados en el sistema A con respecto a la cantidad de espacios no vacíos</code></pre>
+<h4 id="count_da-1">count_d(A)</h4>
+<p>Promedio de individuos muertos ###### Parámetros:</p>
+<pre><code>A: np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-21">Devoluciones:</h6>
+<pre><code>float   #Promedio de individuos muertos en el sistema A con respecto a la cantidad de espacios no vacíos</code></pre>
+<h5 id="ejemplo-3">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; print(cm.count_S(random_matrix), cm.count_I(random_matrix), cm.count_R(random_matrix), cm.count_D(random_matrix))
+7 11 10 7
+&gt;&gt;&gt; print(cm.num_individuals(random_matrix))
+35
+&gt;&gt;&gt; print(cm.count_s(random_matrix), cm.count_i(random_matrix), cm.count_r(random_matrix), cm.count_d(random_matrix))
+0.2 0.3142857142857143 0.2857142857142857 0.2</code></pre>
+<h3 id="la-regla-base-de-evolución-y-el-modelo-sis">La regla base de evolución y el modelo <em>SIS</em></h3>
+<p>Una vez dicho esto considere los siguientes eventos:</p>
+<ol style="list-style-type: decimal">
+<li><p>Si <span class="math"><em>β</em> &gt; <em>α</em></span>, es decir, si el individuo tiene un estado de susceptibilidad la probabilidad de adquirir la infección es mas alta que la probabilidad de mantenerse sano, mientras que si el individuo se encuentra infectado la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado susceptible; debemos tener también en cuenta que el indicador <span class="math"><em>N</em><sub><em>i</em><em>j</em></sub><sup><em>t</em></sup>(<em>I</em>)</span> sera de vital importancia debido a que a mayor valor de <span class="math"><em>N</em><sub><em>i</em><em>j</em></sub><sup><em>t</em></sup>(<em>I</em>)</span> mayor sera la probabilidad de infectarse independientemente de el parámetro <span class="math"><em>β</em></span>, teniendo esto en cuenta la regla para este evento sera:</p>
+<p><br /><span class="math">$$\textit{&quot;Si }x_{i,j}^{t}=0\textit{, }N_{ij}^t(I)&gt;N_{ij}^t(S)\textit{ y }\rho&gt;\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=1\textit{&quot;}$$</span><br /></p>
+donde <span class="math"><em>ρ</em></span> es un valor aleatorio entre 0 y 100, de igual manera se define la siguiente regla: <br /><span class="math">$$\textit{&quot;Si }x_{i,j}^{t}=1\textit{ y }\rho&lt;\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=1\textit{&quot;}$$</span><br /></li>
+<li><p>Si <span class="math"><em>β</em> &lt; <em>α</em></span>, es decir, si el individuo tiene un estado de infección la probabilidad de adquirir pasar al estado sano es mas alta que la probabilidad de mantenerse infectado, mientras que si el individuo se encuentra sano la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado infectado, teniendo esto en cuenta la regla para este evento sera: <br /><span class="math">$$\textit{&quot;Si }x_{ij}^{t}=1\textit{, }N_{ij}^t(I)&lt;N_{ij}^t(S)\textit{ y }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=0\textit{&quot;}$$</span><br /> de igual manera se define la siguiente regla: <br /><span class="math">$$\textit{&quot;Si }x_{ij}^{t}=0\textit{ y }\rho\geq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=0\textit{&quot;}$$</span><br /></p></li>
+</ol>
+<p>Observe que los estados 1. y 2. se pueden representar mediante la siguiente asignación</p>
+<p><br /><span class="math">$$\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
+0 &amp; \textrm{si }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\\
+1 &amp; \textrm{en otro caso}
+\end{array}\right.$$</span><br /></p>
+<p>Claramente la asignación <span class="math">Φ<sub><em>i</em><em>j</em></sub><sup><em>t</em></sup></span> corresponde a una regla totalística, se decidió hacer uso de estas reglas sobre autómatas celulares debido a la complejidad encontrada en la variedad de vecindades que puede tener un agente perteneciente a cualquiera de los dos estados.</p>
+<p>De manera forma definimos la <em>regla base de interacción local</em> como</p>
+
+<p>donde <span class="math"><em>α</em></span> y <span class="math"><em>β</em></span> representan la tasa de recuperación y la tasa de infección, respectivamente.</p>
+<p><em>Observación:</em> Como veremos más adelante, la cantidad de individuos que interactúan en la vecindad no necesariamente es 8, esto se deberá a que los individuos que posean el estado vació se mantendrán en ese estado para todo tiempo <span class="math"><em>t</em></span>, de esta forma el comportamiento del individuo central no se verá afectado por los espacios vacíos, por lo tanto una consideración importante en nuestra regla base de interacción local, será la cantidad de vecinos que interactúan con la célula central, de esta forma:</p>
+
+<h4 id="base_rulealpha-beta-v">base_rule(alpha, beta, V)</h4>
+<p>Aplica la regla base de interacción local ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+V:     np.array   #Vecindad </code></pre>
+<h6 id="devoluciones-22">Devoluciones:</h6>
+<pre><code>float   #Si es 1, el individuo en la célula central de se infectó o se mantuvo enfermo. Si es 0, el individuo en la célula central paso a un estado de susceptibilidad o se mantuvo susceptible</code></pre>
+<h5 id="ejemplo-4">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; cm.base_rule(0.2,0.5,V)
+1.0</code></pre>
+<p>Una vez dicho esto, podemos definir un comportamiento tipo <em>SIS</em>, el cual puede entenderse como una regla de interacción entre dos estados (susceptible e infectado). Para poder generar este tipo de dinámica basta con aplicar la regla base de evolución a cada uno de los agentes del sistema. #### evolution_sis(alpha, beta, U) Aplica la regla base de interacción global ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-23">Devoluciones:</h6>
+<pre><code>np.array    #Evolución del sistema al aplicar la regla base de interacción global</code></pre>
+<h5 id="ejemplo-5">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; random_matrix_2 =  np.array([[random.randint(0,1) for e in range(6)] for e in range(8)])
+&gt;&gt;&gt; cm.evolution_sis(0.2,0.5,random_matrix_2)
+array([[1, 0, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [0, 1, 1, 1, 1, 1],
+       [0, 1, 1, 1, 0, 0],
+       [1, 1, 1, 1, 1, 1]])</code></pre>
+<p>Si usamos la función color obtenemos:</p>
+<div class="figure">
+<img src="Imagenes/color2.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Teniendo en cuenta la manera en la que se definió la regla de evolución, podemos analizar el comportamiento de alguna enfermedad en el sistema <code>random_matrix_2</code> para un número <em>tf</em> de iteraciones, este tipo de análisis los podemos realizar usando la función <code>evolution_SIS</code>.</p>
+<h4 id="evolution_sisalpha-beta-tf-a">evolution_SIS(alpha, beta, tf, A)</h4>
+<p>Aplica la regla base de interacción global al sistema tf veces ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-24">Devoluciones:</h6>
+<pre><code>list    #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf</code></pre>
+<p>Finalmente, para el caso del modelo <em>SIS</em> se implemento una función <code>SIS_model</code> que fuera capaz de reunir las cantidades de individuos por estado junto con sus valores normalizados y la visualización del cambio generado por la regla de evolución en el sistema. #### SIS_model(alpha, beta, tf, A) Modelo SIS ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-25">Devoluciones:</h6>
+<pre><code>list    #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada</code></pre>
+<p>Intentemos ahora definir una condición inicial para el sistema, basada en el porcentaje de individuos infectados que queremos incluir, es decir, si quisiéramos generar una condición inicial de <em>10%</em> de infectados, esto es equivalente a decir que 1 de cada 10 individuos tiene la enfermedad. La función <code>num_I</code> nos permite definir la razón a:b de infectados y la función <code>initial_condition</code> nos permite aplicarla en la condición inicial del sistema. #### num_I(a,b) Porcentaje de infectados ###### Parámetros:</p>
+<pre><code>a: int    #Cantidad de infectados por cada b habitantes
+b: int    #Cantidad de habitantes</code></pre>
+<h6 id="devoluciones-26">Devoluciones:</h6>
+<p><code>list   #Retorna la lista con una cantidad a de infectados con respecto a una población de tamaño b</code> #### initial_condition(I0, A) Define la condición inicial del sistema ###### Parámetros:</p>
+<pre><code>I0: float       #Porcentaje de individuos infectados en el sistema 
+A:  np.array    #Arreglo sobre el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-27">Devoluciones:</h6>
+<pre><code>np.array    #Condición inicial del sistema</code></pre>
+<h5 id="ejemplo-6">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; system_0 = np.zeros((5,8))
+&gt;&gt;&gt; system_0 = cm.initial_condition(0.1, system_0)
+&gt;&gt;&gt; system_0
+array([[0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 1., 0., 0.]])
+&gt;&gt;&gt; plt.imshow(cm.color(system_0),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)</code></pre>
+<div class="figure">
+<img src="Imagenes/system_0.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sis_salpha-beta-tf-a">graph_sis_S(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos susceptibles normalizada hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-28">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf</code></pre>
+<h5 id="ejemplo-7">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; cm.graph_sis_S(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/sus_sis.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sis_ialpha-beta-tf-a">graph_sis_I(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-29">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf</code></pre>
+<h5 id="ejemplo-8">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; cm.graph_sis_I(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/inf_sis.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sisalpha-beta-tf-a">graph_sis(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos susceptibles e infectados normalizadas hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-30">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica que describe la evolución de los estados S e I en el sistema A hasta un tiempo tf</code></pre>
+<h5 id="ejemplo-9">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; cm.graph_sis(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/sis_sis.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Podemos observar también el comportamiento del sistema mediante el siguiente código:</p>
+<pre><code>&gt;&gt;&gt; ex_1 = cm.SIS_model(0.2,0.5,10,system_0)[4]
+&gt;&gt;&gt; for i in range(10):
+......plt.imshow(cm.color(ex_1[i]),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)
+......plt.savefig(&#39;ex_1&#39;+str(i)+&#39;.jpg&#39;)
+
+&gt;&gt;&gt; import cv2
+&gt;&gt;&gt; img_ex_1 = []
+&gt;&gt;&gt; for i in range(10):
+......img = cv2.imread(&#39;ex_1&#39;+str(i)+&#39;.jpg&#39;)
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_1.append(img)
+
+&gt;&gt;&gt; out = cv2.VideoWriter(&#39;ex_1.mp4&#39;,cv2.VideoWriter_fourcc(*&#39;DIVX&#39;), 15, size)
+ 
+&gt;&gt;&gt; for i in range(len(img_ex_1)):
+......out.write(img_ex_1[i])
+&gt;&gt;&gt; out.release()</code></pre>
+<div class="figure">
+<img src="Imagenes/ex_1.gif" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h3 id="las-reglas-de-interacción-si-ir-y-el-modelo-sir">Las reglas de interacción <em>SI</em> , <em>IR</em> y el modelo <em>SIR</em></h3>
+<h4 id="regla-de-interacción-para-el-estado-s">Regla de interacción para el estado S</h4>
+<p>Basándonos en el principio de que los individuos susceptibles a la enfermedad no puedan recuperarse, es decir, un individuo que no haya tenido la enfermedad no podrá curarse de ella. Además, si suponemos también que los individuos que están infectados o recuperados en un tiempo �� no pueden adquirir la cualidad de susceptibilidad para un periodo de tiempo posterior, bien sea porque generaron inmunidad frente a la enfermedad (en el caso de los recuperados) o porque si tiene la enfermedad, no es un paciente con riesgo de adquirir la enfermedad debido a que ya la posee (caso infectado).</p>
+<p>La manera en la que se implemento esta regla de interacción fue mediante la función <code>interaction_SI</code> la cual aplica la <strong><em>regla base de evolución</em></strong> únicamente a los individuos susceptibles. #### interaction_SI(alpha, beta, A) Aplica la regla de interacción del estado S ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+A:     np.array   #Sistema </code></pre>
+<h6 id="devoluciones-31">Devoluciones:</h6>
+<pre><code>np.array    #Arreglo que cuenta con los individuos que se infectaron, individuos que se mantuvieron susceptibles e individuos que ya se encontraban recuperados</code></pre>
+<h4 id="regla-de-interacción-para-el-estado-i">Regla de interacción para el estado I</h4>
+<p>Usualmente la tasa de recuperación �� se interpreta como la probabilidad de recuperación individual, para implementar este concepto en <code>Casimulations</code> se interpreto la tasa de recuperación individual como una tasa de recuperación global, es decir, ��% de las personas infectadas se recuperarán de la enfermedad.</p>
+<p>Al igual que en el modelo <em>SIS</em>, se impĺementó una función <code>num_R</code> la cual se encarga de describir la razón de individuos recuperados frente a individuos infectados. #### num_R(a, b) Porcentaje de recuperados ###### Parámetros:</p>
+<pre><code>a: int    #Cantidad de recuperados por cada b infectados
+b: int    #Cantidad de infectados</code></pre>
+<h6 id="devoluciones-32">Devoluciones:</h6>
+<p><code>list   #Retorna la lista con una cantidad a de recuperados con respecto a una población infectada de tamaño b</code> #### interaction_IR(alpha, beta, A) Aplica la regla de interacción del estado I ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+A:     np.array   #Sistema </code></pre>
+<h6 id="devoluciones-33">Devoluciones:</h6>
+<p><code>np.array   #Arreglo que cuenta con los individuos que se recuperaron de la enfermedad, individuos que se mantuvieron enfermos e individuos susceptibles</code></p>
+<p>La regla de interacción para el modelo <em>SIR</em> se implemento por medio de la función <code>evolution_sir</code>, con la cual se puede expresar la regla de evolución para el modelo <em>SIR</em> <code>evolution_SIR</code> para un número tf de iteraciones. #### evolution_sir(alpha, beta, U) Aplica la regla que define el comportamiento del modelo sir ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-34">Devoluciones:</h6>
+<p><code>np.array   #Evolución del sistema al aplicar la regla de comportamiento sir</code> #### evolution_SIR(alpha, beta, tf, A) Aplica la regla base de comportamiento sir de manera global al sistema tf veces ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-35">Devoluciones:</h6>
+<p><code>list   #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf</code> #### SIR_model(alpha, beta, tf, A) Modelo SIR ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-36">Devoluciones:</h6>
+<p><code>list   #Contiene las coordenadas (x,n^x(S)), (x,n^x(I)) y (x,n^x(R)) donde las primeras coomponentes de cada coordenada es una iteración y la segunda componente es la cantidad de individuos pertenceciente a los estadoss S, I o R, respectivamente.</code></p>
+<div class="figure">
+<img src="Imagenes/system_0_1.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sir_salpha-beta-tf-a">graph_sir_S(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos susceptibles normalizada hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-37">Devoluciones:</h6>
+<p><code>.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; cm.graph_sir_S(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/sus_sir.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sir_ialpha-beta-tf-a">graph_sir_I(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-38">Devoluciones:</h6>
+<p><code>.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; cm.graph_sir_I(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/inf_sir.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_sir_ralpha-beta-tf-a">graph_sir_R(alpha, beta, tf, A)</h4>
+<p>Grafica la cantidad de individuos recuperados normalizada hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-39">Devoluciones:</h6>
+<p><code>.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; cm.graph_sir_R(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/rec_sir.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<h4 id="graph_siralpha-beta-tf-a">graph_sir(alpha, beta, tf, A)</h4>
+<p>Graficá la cantidad de individuos susceptibles, infectados y recuperados normalizadas hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-40">Devoluciones:</h6>
+<p><code>.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; cm.graph_sir(0.2,0.5,30,system_0)</code></pre>
+<div class="figure">
+<img src="Imagenes/sir_sir.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Podemos observar también el comportamiento del sistema mediante el siguiente código:</p>
+<pre><code>&gt;&gt;&gt; ex_2 = cm.SIR_model(0.2,0.5,20,system_0)[6]
+&gt;&gt;&gt; for i in range(20):
+......plt.imshow(cm.color(ex_2[i]),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)
+......plt.savefig(&#39;ex_2&#39;+str(i)+&#39;.jpg&#39;)
+
+&gt;&gt;&gt; import cv2
+&gt;&gt;&gt; img_ex_2 = []
+&gt;&gt;&gt; for i in range(10):
+......img = cv2.imread(&#39;ex_2&#39;+str(i)+&#39;.jpg&#39;)
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_2.append(img)
+
+&gt;&gt;&gt; out = cv2.VideoWriter(&#39;ex_2.mp4&#39;,cv2.VideoWriter_fourcc(*&#39;DIVX&#39;), 15, size)
+ 
+&gt;&gt;&gt; for i in range(len(img_ex_2)):
+......out.write(img_ex_2[i])
+&gt;&gt;&gt; out.release()</code></pre>
+<div class="figure">
+<img src="Imagenes/ex_2.gif" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>A: list       #Lista de coordenadas -- bloque noroeste
+B: listlista de coordenadas – bloque norte 
+C: list lista de coordenadas – bloque noreste
+D: list lista de coordenadas – bloque oeste
+E: list     lista de coordenadas – bloque central
+F: list lista de coordenadas – bloque este
+G: list lista de coordenadas – bloque suroeste
+H: list lista de coordenadas – bloque sur
+I: list lista de coordenadas – bloque sureste
+J: list lista de coordenadas – distribución aleatoria   </code></pre>
+<h3 id="la-dispersión-como-un-factor-clave-en-la-velocidad-de-propagación">La dispersión como un factor clave en la velocidad de propagación</h3>
+<p>Vale la pena preguntarnos si es posible que la ubicación inicial de los individuos infectados afecta el comportamiento de la enfermedad en un periodo de tiempo determinado. Las funciones <code>northwest, north, northeast, west, center, east, southwest, south</code> y <code>southeast</code> nos permiten ubicar a casi la totalidad de la población infectada en una de nueve divisiones realizadas sobre el sistema basandonos en los puntos cardinales, también contamos con la función <code>aleatorio</code> la cual distribuye aleatoriamente a los individuos infectados, cabe resaltar que estas funciones son únicamente para definir la condición inicial del sistema de una manera mas especifica que la función <code>initial_condition</code>. #### northwest(n, m, I0) Localiza la población infectada en la zona noroeste del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-41">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona noroeste del sistema rectangular de dimensión n*m</code> #### north(n, m, I0) Localiza la población infectada en la zona norte del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int          #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float          #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-42">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona norte del sistema rectangular de dimensión n*m</code> #### northeast(n, m, I0) Localiza la población infectada en la zona noreste del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-43">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona noreste del sistema rectangular de dimensión n*m</code> #### west(n, m, I0) Localiza la población infectada en la zona oeste del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-44">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona oeste del sistema rectangular de dimensión n*m</code> #### center(n, m, I0) Localiza la población infectada en la zona central del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-45">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona central del sistema rectangular de dimensión n*m</code> #### east(n, m, I0) Localiza la población infectada en la zona este del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-46">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona este del sistema rectangular de dimensión n*m</code> #### southwest(n, m, I0) Localiza la población infectada en la zona suroeste del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-47">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona suroeste del sistema rectangular de dimensión n*m</code> #### south(n, m, I0) Localiza la población infectada en la zona sur del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-48">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona sur del sistema rectangular de dimensión n*m</code> #### southeast(n, m, I0) Localiza la población infectada en la zona sureste del rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-49">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada en la zona sureste del sistema rectangular de dimensión n*m</code> #### aleatorio(n, m, I0) Localiza la población infectada de manera uniforme en el rectángulo ###### Parámetros:</p>
+<pre><code>n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados</code></pre>
+<h6 id="devoluciones-50">Devoluciones:</h6>
+<p><code>np.array   #Condición inicial con toda la población infectada ubicada de manera uniforme en el sistema rectangular de dimensión n*m</code> <code>CAsimulations</code> incluye también maneras de visualizar las zonas de riesgo en un sistema, es posible generar mapas de calor específicos por medio de las funciones <code>heatmap_sis, heatmap_sir_I</code> y <code>heatmap_sir_R</code>, mientras que los mapas generados por <code>heatmap_sis</code> y <code>heatmap_sir_I</code> muestran el comportamiento de la población infectada para los modelos <em>SIS</em> y <em>SIR</em> respectivamente, la función <code>heatmap_sir_R</code> nos muestra como evolucionó la población recuperada, es decir, que individuos se recuperaron primero de la enfermedad. #### heatmap_sis(alpha, beta, tf, A) Graficá el comportamiento espacial de la enfermedad hasta un tiempo tf ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-51">Devoluciones:</h6>
+<p><code>.plt   #Gráfica del mapa de calor que describe como evoluciono la enfermedad en el sistema A hasta un tiempo tf</code> #### heatmap_sir_I(alpha, beta, tf, A) Graficá el comportamiento espacial de la población infectada hasta un tiempo tf para el modelo SIR ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-52">Devoluciones:</h6>
+<p><code>.plt   #Gráfica del mapa de calor que describe como evoluciono la población infectada en el sistema A hasta un tiempo tf para el modelo SIR</code> #### heatmap_sir_R(alpha, beta, tf, A) Graficá el comportamiento espacial de la población recuperada hasta un tiempo tf para el modelo SIR ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico</code></pre>
+<h6 id="devoluciones-53">Devoluciones:</h6>
+<p><code>.plt   #Gráfica del mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo SIR</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; system_1 = cm.northwest(30, 30, 0.1)
+&gt;&gt;&gt; plt.imshow(cm.color(system_1), cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)</code></pre>
+<div class="figure">
+<img src="Imagenes/system_1.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; cm.heatmap_sis(0.2, 0.5, 30, system_1)</code></pre>
+<div class="figure">
+<img src="Imagenes/hm_sis.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; cm.heatmap_sir_I(0.2, 0.5, 30, system_1)</code></pre>
+<div class="figure">
+<img src="Imagenes/hm_sir_I.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; cm.heatmap_sir_R(0.2, 0.5, 30, system_1)</code></pre>
+<div class="figure">
+<img src="Imagenes/hm_sir_R.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; ex_3 = cm.SIS_model(0.2, 0.5, 30, system_1)[4]
+&gt;&gt;&gt; for i in range(30):
+......plt.imshow(cm.color(ex_3[i]),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)
+......plt.savefig(&#39;ex_3&#39;+str(i)+&#39;.jpg&#39;)
+
+&gt;&gt;&gt; img_ex_3 = []
+&gt;&gt;&gt; for i in range(30):
+......img = cv2.imread(&#39;ex_3&#39;+str(i)+&#39;.jpg&#39;)
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_3.append(img)
+
+&gt;&gt;&gt; out = cv2.VideoWriter(&#39;ex_3.mp4&#39;,cv2.VideoWriter_fourcc(*&#39;DIVX&#39;), 15, size)
+ 
+&gt;&gt;&gt; for i in range(len(img_ex_3)):
+......out.write(img_ex_3[i])
+&gt;&gt;&gt; out.release()</code></pre>
+<div class="figure">
+<img src="Imagenes/ex_3.gif" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; ex_4 = cm.SIR_model(0.2, 0.5, 45, system_1)[6]
+&gt;&gt;&gt; for i in range(45):
+......plt.imshow(cm.color(ex_4[i]),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)
+......plt.savefig(&#39;ex_4&#39;+str(i)+&#39;.jpg&#39;)
+
+&gt;&gt;&gt; img_ex_4 = []
+&gt;&gt;&gt; for i in range(45):
+......img = cv2.imread(&#39;ex_4&#39;+str(i)+&#39;.jpg&#39;)
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_4.append(img)
+
+&gt;&gt;&gt; out = cv2.VideoWriter(&#39;ex_4.mp4&#39;,cv2.VideoWriter_fourcc(*&#39;DIVX&#39;), 15, size)
+ 
+&gt;&gt;&gt; for i in range(len(img_ex_4)):
+......out.write(img_ex_4[i])
+&gt;&gt;&gt; out.release()</code></pre>
+<div class="figure">
+<img src="Imagenes/ex_4.gif" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<p>Si lo que queremos es analizar el comportamiento para las diferentes condiciones iniciales basadas en los puntos cardinales, podemos utilizar la función <code>distribution_graph</code> la cual nos permitirá graficar 10 posibles condiciones iniciales. #### distribution_graph(A, B, C, D, E, F, G, H, I, J) Graficá la variación presente en los cambios de distribución inicial de población infectada ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas - bloque noroeste
+B: list   #Lista de coordenadas - bloque norte 
+C: list   #Lista de coordenadas - bloque noreste
+D: list   #Lista de coordenadas – bloque oeste
+E: list   #Lista de coordenadas – bloque central
+F: list   #Lista de coordenadas – bloque este
+G: list   #Lista de coordenadas – bloque suroeste
+H: list   #Lista de coordenadas – bloque sur
+I: list   #Lista de coordenadas – bloque sureste
+J: list   #Lista de coordenadas – distribución aleatoria     </code></pre>
+<h6 id="devoluciones-54">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de las variaciones bajo cambios en la distribución de población infectada</code></pre>
+<h5 id="ejemplo-10">Ejemplo:</h5>
+<pre><code>&gt;&gt;&gt; con_1=cm.SIS_model(0.2, 0.5, 30, cm.northwest(30, 30, 0.1))
+&gt;&gt;&gt; con_2=cm.SIS_model(0.2, 0.5, 30, cm.north(30, 30, 0.1))
+&gt;&gt;&gt; con_3=cm.SIS_model(0.2, 0.5, 30, cm.northeast(30, 30, 0.1))
+&gt;&gt;&gt; con_4=cm.SIS_model(0.2, 0.5, 30, cm.west(30, 30, 0.1))
+&gt;&gt;&gt; con_5=cm.SIS_model(0.2, 0.5, 30, cm.center(30, 30, 0.1))
+&gt;&gt;&gt; con_6=cm.SIS_model(0.2, 0.5, 30, cm.east(30, 30, 0.1))
+&gt;&gt;&gt; con_7=cm.SIS_model(0.2, 0.5, 30, cm.southwest(30, 30, 0.1))
+&gt;&gt;&gt; con_8=cm.SIS_model(0.2, 0.5, 30, cm.south(30, 30, 0.1))
+&gt;&gt;&gt; con_9=cm.SIS_model(0.2, 0.5, 30, cm.southeast(30, 30, 0.1))
+&gt;&gt;&gt; con_10=cm.SIS_model(0.2, 0.5, 30, cm.aleatorio(30, 30, 0.1))
+&gt;&gt;&gt; cm.distribution_graph(con_1[0], con_2[0], con_3[0], con_4[0], con_5[0], con_6[0], con_7[0], con_8[0], con_9[0], con_10[0])</code></pre>
+<p><img src="Imagenes/dist.png" alt="texto alternativo" /> También es posible realizar un gran número de simulaciones, esto con el fin de analizar diferentes condiciones iniciales. Las funciones <code>medium_surves_sis</code> y <code>medium_surves_sir</code> son capaces de generar las coordenadas promedio para un número <em>csim</em> de simulaciones mientras que las funciones <code>graph_medium_curves_sis</code> y <code>graph_medium_curves_sir</code> nos permiten visualizar estos comportamientos &quot;promedio&quot;. #### medium_curves_sis(alpha, beta, tf, csim, I0, A) Genera las listas de coordenadas promedio al aplicar el modelo sis en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo</code></pre>
+<h6 id="devoluciones-55">Devoluciones:</h6>
+<p><code>list   #Lista de coordenadas promedio para el estado S, para el estado I y valores en el tiempo de los estados S e I ubicados en listas respectivamente</code> #### medium_curves_sir(alpha, beta, tf, csim, I0, A) Genera las listas de coordenadas promedio al aplicar el modelo SIR en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo</code></pre>
+<h6 id="devoluciones-56">Devoluciones:</h6>
+<p><code>list   #Lista de coordenadas promedio para los estados S, I y R y valores en el tiempo de los estados S, I y R ubicados en listas respectivamente</code> #### graph_medium_curves_sis(alpha, beta, tf, csim, I0, A) Graficá los valores promedio al aplicar csim veces el modelo sis para un valor inicial fijo de individuos infectados ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo</code></pre>
+<h6 id="devoluciones-57">Devoluciones:</h6>
+<p><code>.plt   #Gráfica con los valores promedio para cada estado del modelo SIS</code> #### graph_medium_curves_sir(alpha, beta, tf, csim, I0, A) Gráfica los valores promedio al aplicar csim veces el modelo SIR para un valor inicial fijo de individuos infectados ###### Parámetros:</p>
+<pre><code>alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo</code></pre>
+<h6 id="devoluciones-58">Devoluciones:</h6>
+<p><code>.plt   #Gráfica con los valores promedio para cada estado del modelo SIR</code> ##### ejemplos:</p>
+<pre><code>&gt;&gt;&gt; system_2 = np.zeros((20, 20))
+&gt;&gt;&gt; cm.graph_medium_curves_sir(0.2, 0.5, 30, 50, 0.1, system_2)</code></pre>
+<div class="figure">
+<img src="Imagenes/gmc_sir.png" alt="texto alternativo" /><p class="caption">texto alternativo</p>
+</div>
+<pre><code>&gt;&gt;&gt; cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))</code></pre>
+<p><img src="Imagenes/gmc_sis.png" alt="texto alternativo" /> ### Análisis cambiando la condición de frontera del sistema Implementaremos ahora una manera de definir cualquier tipo de sistema, lo primero que debemos hacer es definir el espacio sobre el cual queremos definir nuestro sistema, es decir, si por ejemplo quisiéramos definir una región triangular, lo primero que debemos hacer es definir una región rectangular que lo contenga, posteriormente se debe generar una lista con las coordenadas del sistema. La función <code>boundary</code> se encarga de convertir cada píxel con coordenadas en la lista que define el sistema en un agente que inicialmente tiene un estado <em>S</em>, si buscamos una manera de facilitar el trabajo de definir dicha lista, la función <code>domain_definition</code> nos permitirá definir bloques o submatrices para abarcar mas espacio en el espacio inicial. #### boundary(L,M) Genera sub-matrices nulas en la matriz M ###### Parámetros:</p>
+<pre><code>L: list       #Lista de coordenadas que se anularan para definir donde se aplican los modelos epidemiológicos
+M: np.array   #Arreglo sobre el cual se definen las condiciones iniciales de entorno de ejecución de los modelos epidemiológicos</code></pre>
+<h6 id="devoluciones-59">Devoluciones:</h6>
+<p><code>np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera</code> #### domain_definition(n, m, a, b, M) Define y genera las sub-matrices nulas donde se aplicarán los análisis epidemiológicos ###### Parámetros:</p>
+<pre><code>n: int        #Cantidad de filas de la sub-matriz
+m: int        #Cantidad de columnas de la sub-matriz
+a: int        #Fila en la cual se va a ubicar la sub-matriz
+b: int        #Columna en la cual se va a ubicar a sub-matriz
+M: np.array   #Arreglo sobre el cual se va a generar la sub-matriz nula</code></pre>
+<h6 id="devoluciones-60">Devoluciones:</h6>
+<p><code>np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera</code> ##### Ejemplo:</p>
+<pre><code>&gt;&gt;&gt; empty_space = -np.ones((15, 20))
+&gt;&gt;&gt; system_2 = cm.boundary([[2, 5], [3, 7], [8, 2], [14, 15]], empty_space)
+&gt;&gt;&gt; system_2 = cm.domain_definition(3, 3, 6, 12, system_2)
+&gt;&gt;&gt; system_2 = cm.domain_definition(4, 2, 8, 7, system_2)
+&gt;&gt;&gt; plt.imshow(cm.color(system_2),cmap=&quot;nipy_spectral&quot;, interpolation=&#39;nearest&#39;)</code></pre>
+<p><img src="Imagenes/system_2.png" alt="texto alternativo" /> A partir de esto es posible implementar funciones mas complejas para la definición de algún sistema particular, este es el caso de las funciones <code>rombo</code> y la función <code>triangulo</code> #### rombo(a, b, c, d, M) Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dimensión de la primera submatriz cxd en el espacio M ###### Parámetros:</p>
+<pre><code>a: int        #Columna donde se ubica el vértice izquierdo del rombo
+b: int        #Ancho del rombo -1 
+c: int        #Fila donde se ubica el vértice izquierdo del rombo 
+d: int        #Columna donde se ubiaca la primera submatriz 
+M: np.array   #Espacio donde se definirá el sistema</code></pre>
+<h6 id="devoluciones-61">Devoluciones:</h6>
+<p><code>np.array#Arreglo de coordenadas con un sistema tipo rombo</code> #### triangulo(n, m, a, b, M) Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M ###### Parámetros:</p>
+<pre><code>n: int        #Columna donde se ubica el vértice izquierdo del triangulo
+m: int        #Ancho del triangulo
+a: int        #Fila donde se ubica el vértice izquierdo del triángulo
+b: int        #Columna donde se ubica la primera submatriz
+M: np.array   #Espacio donde se definirá el sistema</code></pre>
+<h6 id="devoluciones-62">Devoluciones:</h6>
+<p><code>np.array arreglo de coordenadas con un sistema triangular</code> Entre las funciones de graficacion de <code>CAsimulations</code> también encontramos a <code>systems_graph</code>, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas. #### systems_graph(A, B, C, D, E, F, G) Graficá los cambios presentes en la condición de frontera ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas – primera región
+B: list   #Lista de coordenadas – segunda región
+C: list   #Lista de coordenadas – tercera región
+D: list   #Lista de coordenadas – cuarta región
+E: list   #Lista de coordenadas – quinta región
+F: list   #Lista de coordenadas – sexta región
+G: list   #Lista de coordenadas – séptima región</code></pre>
+<h6 id="devoluciones-63">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de los cambios en el modelo tomando condiciones de frontera diferentes</code></pre>
+<p>Ya sabemos como generar sistemas de cualquier tipo y de cualquier tamaño, es tiempo de ver las posibilidades de los modelos epidemiológicos frente a cambios de escala, si definimos por medio de <code>domain_definition</code> diferentes escalas para un mismo tipo de sistema, la función <code>scale_differences</code> nos permitirá ver calcular la variación entre dos escalas, por medio de <code>scales_graph</code> podremos visualizar los cambios presentes en 5 escalas diferentes, mientras que <code>scales_differences_graph</code> nos permitirá visualizar las diferencias entre cuatro escalas distintas. #### scale_differences(L1, L2) Calcula las diferencias por cada iteración entre dos escalas diferentes ###### Parámetros:</p>
+<pre><code>L1: list      #Lista con los valores numéricos obtenidos en una primera escala
+L2: list      #Lista con los valores numéricos obtenidos en la segunda escala</code></pre>
+<h6 id="devoluciones-64">Devoluciones:</h6>
+<p><code>list #Lista con las diferencias entre ambas escalas por cada iteración.</code> #### scales_graph(A, B, C, D, E) Graficá los cambios presentes en la variación de escalas ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas – primera escala
+B: list   #Lista de coordenadas – segunda escala
+C: list   #Lista de coordenadas – tercera escala
+D: list   #Lista de coordenadas – cuarta escala
+E: list   #Lista de coordenadas – quinta escala</code></pre>
+<h6 id="devoluciones-65">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes</code></pre>
+<h4 id="scales_differences_grapha-b-c-d">scales_differences_graph(A, B, C, D)</h4>
+<p>Graficá los cambios presentes en la variación de escalas ###### Parámetros:</p>
+<pre><code>A: list   #Lista de coordenadas – primera escala vs última escala
+B: list   #Lista de coordenadas – segunda escala vs última escala
+C: list   #Lista de coordenadas – tercera escala vs última escala
+D: list   #Lista de coordenadas – cuarta escala vs última escala</code></pre>
+<h6 id="devoluciones-66">Devoluciones:</h6>
+<pre><code>.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes</code></pre>
+
+            </article>
+        <!-- script externo de prettify -->
+        <script src="js/prettify.js"></script>
+        <!-- iniciar función -->
+        <script>window.onload=function(){
+        prettyPrint();
+        }
+        </script>
+
+    <footer class="site-footer seccion">
+        <div class="contenedor contenedor-footer">
+            <article>Proyecto Realizado por Grupo de Simulación Con Automatas</article>
+            <p class="copyright">Todos los Derechos Reservados 2020 &copy; </p>
+        </div>
+    </footer>
+</body>
+</html>
